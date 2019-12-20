@@ -1,38 +1,36 @@
-import React, { Component } from 'react';
-import { w3cwebsocket as W3CWebSocket } from "websocket";
+import React, { useEffect, useState } from 'react';
+import getWebsocket from '../services/websocket'
 
-// establish new websocket connection
-const client = new W3CWebSocket('ws://localhost:4000');
+export default function App() {
+  const [userList, setUserList] = useState({})
+  const [websocket, ] = useState(getWebsocket())
 
-class App extends Component {
-  
-  componentDidMount() {
-    client.onopen = () => {
-      console.log('WebSocket Client Connected');
-    };
-    client.onmessage = (message) => {
-      console.log(message);
-    };
-  }
-  
-  render() {
-    return (
+  useEffect(()=>{
+    websocket.create({
+      updateConnectionList: setUserList,
+      userType: 'client'
+    }) 
+  }, [])
+
+  console.log(userList)
+  var userListKeys = Object.keys(userList)
+
+
+  return (
+    <div style={{
+      backgroundColor: '#300',
+      height: '100vh',
+    }}>
       <div style={{
-        backgroundColor: '#300',
-        height: '100vh',
+        paddingTop: '30%',
+        textAlign: 'center',
+        color: '#fff',
+        fontWeight: 'bold',
+        fontSize: 24,
       }}>
-        <div style={{
-          paddingTop: '30%',
-          textAlign: 'center',
-          color: '#fff',
-          fontWeight: 'bold',
-          fontSize: 24,
-        }}>
-          CLIENT
-        </div>
+        CLIENT
       </div>
-    );
-  }
+    </div>
+  );
+  
 }
-
-export default App;

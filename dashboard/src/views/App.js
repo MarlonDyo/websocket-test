@@ -2,14 +2,17 @@ import React, { useEffect, useState } from 'react';
 import getWebsocket from '../services/websocket'
 
 export default function App() {
-  const [userList, setUserList] = useState([])
+  const [userList, setUserList] = useState({})
   const [websocket, ] = useState(getWebsocket())
 
   useEffect(()=>{
     websocket.create({
-      updateConnectionList: setUserList
+      updateConnectionList: setUserList,
+      userType: 'dashboard'
     }) 
   }, [])
+
+  var userListKeys = Object.keys(userList)
 
   return (
     <div style={{
@@ -46,15 +49,16 @@ export default function App() {
         }}>
           <div style={{backgroundColor: '#ccc', width: 300}}>
             {
-              userList.map( (item, index) => {
+              userListKeys.map( (key, index) => {
+                var userItem = userList[key]
                 return(
                   <div key={index} style={{
                     color: '#222'
                   }}>
-                    {item}
+                    {key} - {userItem.type}
                     <button
                       onClick={()=> {
-                        websocket.sendMsgTo(item,'hello')
+                        websocket.sendMsgTo(key,'hello')
                       }}
                     >
                       send hello

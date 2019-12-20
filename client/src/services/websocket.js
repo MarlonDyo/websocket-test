@@ -19,11 +19,11 @@ function parseMsg(msg) {
 const SingletonWebSocket = {
   create: ({
     updateConnectionList,
-    userType
+    userType,
   }) => {
     _updateConnectionList = updateConnectionList
     if (websocket !== undefined) return
-
+    
     // establish new websocket connection
     websocket = new W3CWebSocket(server);
     websocket.onopen = () => {

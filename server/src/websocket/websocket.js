@@ -15,7 +15,7 @@ function parseMsg(msg) {
     msgJson = {}
   }
   return msgJson
-} 
+}
 
 function msgHandler(id, msg) {
   var msgJson = parseMsg(msg)
@@ -23,6 +23,14 @@ function msgHandler(id, msg) {
     case 'conn':
       console.log(`${id}: Requested connections`);
       SingletonWebSocket.sendConnectionList(id)
+      break;
+    case 'setUserType':
+      console.log(`${id}: Log as ${msgJson.content}`)
+      SingletonWebSocket.setUserType(
+        id,
+        msgJson.content
+      )
+      SingletonWebSocket.sendConnectionList()
       break;
     case 'msg': 
       console.log(`${id}: Sent msg "${msgJson.target}" to ${msgJson.content}`);
@@ -57,32 +65,47 @@ const SingletonWebSocket = {
         console.log(`User disconnected ${id}`)
         delete _CLIENTS[id]
         delete _CLIENT_CONNECTIONS[id]
+        SingletonWebSocket.sendConnectionList()
       })
 
     });
   },
   msgTo: (sourceClientKey, targetClientKey, msg) => {
-    _CLIENT_CONNECTIONS[targetClientKey].send(
-      JSON.stringify({
-        type: 'msg',
-        source: sourceClientKey,
-        content: msg,
-      })
-    )
+    if (_CLIENT_CONNECTIONS[targetClientKey]) {
+      _CLIENT_CONNECTIONS[targetClientKey].send(
+        JSON.stringify({
+          type: 'msg',
+          source: sourceClientKey,
+          content: msg,
+        })
+      )
+    }
+    else {
+      console.log('Msg failed')
+    }
+
+  },
+  setUserType: (id, userType) => {
+    _CLIENTS[id].type = userType
   },
   sendConnectionList: (targetClientKey) => {
     var clientKeys = Object.keys(_CLIENT_CONNECTIONS)
     var msg = JSON.stringify({
       type: 'conn',
-      content: clientKeys,
+      content: _CLIENTS,
     })
     if (targetClientKey === undefined) {
       clientKeys.forEach( key => {
-        _CLIENT_CONNECTIONS[key].send( msg )
+        if (_CLIENTS[key].type === 'dashboard') {
+          _CLIENT_CONNECTIONS[key].send( msg )
+        }
+        
       })
       return
-    }    
-    _CLIENT_CONNECTIONS[targetClientKey].send( msg )
+    }
+    if (_CLIENTS[targetClientKey].type === 'dashboard') {
+      _CLIENT_CONNECTIONS[targetClientKey].send( msg )
+    }
   }
 
 }
