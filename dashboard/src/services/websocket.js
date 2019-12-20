@@ -22,8 +22,10 @@ const SingletonWebSocket = {
     userType
   }) => {
     _updateConnectionList = updateConnectionList
-    if (websocket !== undefined) return
-
+    if (websocket !== undefined) {
+      SingletonWebSocket.requestConnectionsUpdate()
+      return
+    }
     // establish new websocket connection
     websocket = new W3CWebSocket(server);
     websocket.onopen = () => {
@@ -44,6 +46,9 @@ const SingletonWebSocket = {
     websocket.onclose = () => {
       console.log('server disconnected, please refresh')
     }
+  },
+  close: () => {
+    websocket.close()
   },
   send: (msg) => {
     websocket.send(msg)

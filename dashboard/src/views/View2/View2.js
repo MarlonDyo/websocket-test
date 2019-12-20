@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import getWebsocket from '../services/websocket'
+import getWebsocket from '../../services/websocket'
 
-export default function App({history}) {
+export default function View2({history}) {
   const [userList, setUserList] = useState({})
   const [websocket,] = useState(getWebsocket())
 
-  useEffect(() => {
+  useEffect(()=>{
     websocket.create({
       updateConnectionList: setUserList,
       userType: 'dashboard'
-    })
+    }) 
   }, [])
 
   var userListKeys = Object.keys(userList)
@@ -26,7 +26,7 @@ export default function App({history}) {
         fontWeight: 'bold',
         fontSize: 24,
       }}>
-        DASHBOARD (view 1)
+        DASHBOARD (view 2)
         <div>
           <button onClick={() => {
             websocket.send('test')
@@ -36,36 +36,36 @@ export default function App({history}) {
         </div>
         <div>
           <button onClick={() => {
-            websocket.sendMsgTo('target', 'test')
+            websocket.sendMsgTo('target','test')
           }}>
-            send msg to
+            send invalid msg
           </button>
         </div>
         <div>
           <button onClick={() => {
-            history.push('2')
+            history.push('1')
           }}>
             navigate to View1
           </button>
         </div>
         <div style={{
           display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
+          justifyContent:'center',
+          alignItems:'center',
           marginTop: 20,
         }}>
-          <div style={{ backgroundColor: '#ccc', width: 300 }}>
+          <div style={{backgroundColor: '#ccc', width: 300}}>
             {
-              userListKeys.map((key, index) => {
+              userListKeys.map( (key, index) => {
                 var userItem = userList[key]
-                return (
+                return(
                   <div key={index} style={{
                     color: '#222'
                   }}>
                     {key} - {userItem.type}
                     <button
-                      onClick={() => {
-                        websocket.sendMsgTo(key, 'hello')
+                      onClick={()=> {
+                        websocket.sendMsgTo(key,'hello')
                       }}
                     >
                       send hello
@@ -76,7 +76,7 @@ export default function App({history}) {
             }
           </div>
         </div>
-
+        
       </div>
 
     </div>
