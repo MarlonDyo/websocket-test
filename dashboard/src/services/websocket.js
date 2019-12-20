@@ -47,9 +47,6 @@ const SingletonWebSocket = {
       console.log('server disconnected, please refresh')
     }
   },
-  close: () => {
-    websocket.close()
-  },
   send: (msg) => {
     websocket.send(msg)
   },
