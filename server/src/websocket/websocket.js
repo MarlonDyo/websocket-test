@@ -33,7 +33,7 @@ function msgHandler(id, msg) {
       SingletonWebSocket.sendConnectionList()
       break;
     case 'msg': 
-      console.log(`${id}: Sent msg "${msgJson.target}" to ${msgJson.content}`);
+      console.log(`${id}: Sent msg "${msgJson.content}" to ${msgJson.target}`);
       SingletonWebSocket.msgTo(
         id,
         msgJson.target,
